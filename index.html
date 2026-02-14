@@ -610,9 +610,10 @@
         .sound-btn {
             position: fixed;
             top: 70px;
-            right: 20px;
+            right: 80px;
+            /* Moved left to make room for calc icon */
             z-index: 999;
-            padding: 8px 15px;
+            padding: 8px 12px;
             border-radius: 20px;
             border: none;
             color: white;
@@ -637,27 +638,52 @@
         .calc-toggle-btn {
             position: fixed;
             top: 70px;
-            right: 180px;
-            z-index: 999;
-            padding: 8px 15px;
-            border-radius: 20px;
+            right: 20px;
+            z-index: 1000;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
             border: none;
             background: var(--nav-blue);
             color: white;
-            font-weight: bold;
-            font-size: 0.8rem;
+            font-size: 1.5rem;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: all 0.2s;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .calc-toggle-btn.active {
+            background: #ef4444;
+            transform: rotate(90deg);
         }
 
         .calc-toggle-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-            background: #2563eb;
+            transform: scale(1.1);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Floating Sidebar Calculator */
+        #calculator-panel {
+            position: fixed;
+            right: -400px;
+            /* Hidden by default */
+            top: 130px;
+            width: 320px;
+            background: white;
+            padding: 20px;
+            border-radius: var(--radius) 0 0 var(--radius);
+            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+            z-index: 998;
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid #e2e8f0;
+            border-right: none;
+        }
+
+        #calculator-panel.active {
+            right: 0;
         }
 
         /* Calculator Modal Specifics */
@@ -1514,45 +1540,43 @@
         </div>
     </nav>
 
-    <!-- Calculator Modal -->
-    <div class="modal" id="calculator-modal">
-        <div class="modal-content" style="max-width: 350px;">
-            <div id="calc-title-container">
-                <h2 id="calc-title">Calculator 🧮</h2>
+    <!-- Floating Calculator Panel -->
+    <div id="calculator-panel">
+        <div id="calc-title-container" style="display:flex; justify-content:space-between; align-items:center;">
+            <h2 id="calc-title" style="margin:0; font-size:1.2rem;">Calculator 🧮</h2>
+            <button class="help-btn" style="margin:0; font-size:1rem;" onclick="toggleCalculator()">✖</button>
+        </div>
+        <div id="calc-body" style="margin-top:15px;">
+            <div class="calc-display" id="calc-display">0</div>
+            <div class="calc-grid">
+                <button class="btn-calc action" onclick="calcClear()">AC</button>
+                <button class="btn-calc action" onclick="calcDelete()">DEL</button>
+                <button class="btn-calc operator" onclick="calcAppend('/')">/</button>
+                <button class="btn-calc operator" onclick="calcAppend('*')">×</button>
+
+                <button class="btn-calc" onclick="calcAppend('7')">7</button>
+                <button class="btn-calc" onclick="calcAppend('8')">8</button>
+                <button class="btn-calc" onclick="calcAppend('9')">9</button>
+                <button class="btn-calc operator" onclick="calcAppend('-')">-</button>
+
+                <button class="btn-calc" onclick="calcAppend('4')">4</button>
+                <button class="btn-calc" onclick="calcAppend('5')">5</button>
+                <button class="btn-calc" onclick="calcAppend('6')">6</button>
+                <button class="btn-calc operator" onclick="calcAppend('+')">+</button>
+
+                <button class="btn-calc" onclick="calcAppend('1')">1</button>
+                <button class="btn-calc" onclick="calcAppend('2')">2</button>
+                <button class="btn-calc" onclick="calcAppend('3')">3</button>
+                <button class="btn-calc equals" onclick="calcResult()">=</button>
+
+                <button class="btn-calc" style="grid-column: span 2;" onclick="calcAppend('0')">0</button>
+                <button class="btn-calc" onclick="calcAppend('.')">.</button>
             </div>
-            <div id="calc-body">
-                <div class="calc-display" id="calc-display">0</div>
-                <div class="calc-grid">
-                    <button class="btn-calc action" onclick="calcClear()">AC</button>
-                    <button class="btn-calc action" onclick="calcDelete()">DEL</button>
-                    <button class="btn-calc operator" onclick="calcAppend('/')">/</button>
-                    <button class="btn-calc operator" onclick="calcAppend('*')">×</button>
-
-                    <button class="btn-calc" onclick="calcAppend('7')">7</button>
-                    <button class="btn-calc" onclick="calcAppend('8')">8</button>
-                    <button class="btn-calc" onclick="calcAppend('9')">9</button>
-                    <button class="btn-calc operator" onclick="calcAppend('-')">-</button>
-
-                    <button class="btn-calc" onclick="calcAppend('4')">4</button>
-                    <button class="btn-calc" onclick="calcAppend('5')">5</button>
-                    <button class="btn-calc" onclick="calcAppend('6')">6</button>
-                    <button class="btn-calc operator" onclick="calcAppend('+')">+</button>
-
-                    <button class="btn-calc" onclick="calcAppend('1')">1</button>
-                    <button class="btn-calc" onclick="calcAppend('2')">2</button>
-                    <button class="btn-calc" onclick="calcAppend('3')">3</button>
-                    <button class="btn-calc equals" onclick="calcResult()">=</button>
-
-                    <button class="btn-calc" style="grid-column: span 2;" onclick="calcAppend('0')">0</button>
-                    <button class="btn-calc" onclick="calcAppend('.')">.</button>
-                </div>
-            </div>
-            <button class="btn-game" style="margin-top:20px; width:100%; border:none; background:#94a3b8;"
-                onclick="closeModal('calculator-modal')">Close</button>
         </div>
     </div>
-    <button id="calc-toggle" class="calc-toggle-btn" onclick="openModal('calculator-modal')">
-        <span>🧮</span> Calculator
+
+    <button id="calc-toggle" class="calc-toggle-btn" onclick="toggleCalculator()">
+        <span>🧮</span>
     </button>
 
     <button id="sound-toggle" class="sound-btn on" onclick="toggleSound()">
@@ -2542,6 +2566,14 @@
         // Calculator Logic
         let calcExpr = '';
         const calcDisplay = () => document.getElementById('calc-display');
+
+        function toggleCalculator() {
+            const panel = document.getElementById('calculator-panel');
+            const btn = document.getElementById('calc-toggle');
+            const isActive = panel.classList.toggle('active');
+            btn.classList.toggle('active', isActive);
+            playSound('click');
+        }
 
         function calcAppend(char) {
             playSound('click');

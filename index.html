@@ -2708,7 +2708,7 @@
                 a = ans * b;
             }
 
-            el.innerText = `${a}${op === '*' ? '×' : op === '/' ? '÷' : op}${b}`;
+            el.innerText = `${a}${op === '*' ? '×' : op === '/' ? '/' : op}${b}`;
             document.getElementById(arenaId).appendChild(el);
             arcadeMeteors.push({ el, ans: ans, y: 0, arenaId });
         }

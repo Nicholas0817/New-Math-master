@@ -1097,6 +1097,32 @@
             overflow: hidden;
         }
 
+        /* Enhanced Fireball Skin */
+        .skin-fire-fx {
+            background: radial-gradient(circle at 30% 30%, #fff 0%, #fed7aa 20%, #f97316 50%, #ea580c 80%, #991b1b 100%) !important;
+            box-shadow:
+                0 0 15px #f97316,
+                0 0 30px #ea580c,
+                0 0 45px #991b1b,
+                inset 0 0 10px rgba(255, 255, 255, 0.5) !important;
+            animation: fireball-burn 1.5s infinite alternate ease-in-out !important;
+            border: none !important;
+        }
+
+        @keyframes fireball-burn {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 15px #f97316, 0 0 30px #ea580c, 0 0 45px #991b1b;
+                filter: brightness(1);
+            }
+
+            100% {
+                transform: scale(1.1);
+                box-shadow: 0 0 25px #fb923c, 0 0 50px #f97316, 0 0 75px #dc2626;
+                filter: brightness(1.2) contrast(1.1);
+            }
+        }
+
         .global-slow-mo-active #main-container {
             filter: sepia(0.3) saturate(0.8) contrast(1.1);
             transition: filter 1s ease;
@@ -1671,7 +1697,7 @@
         // State
         const SHOP_ITEMS = [
             // Skins
-            { id: 'skin_fire', name: 'Fireball', price: 100, category: 'skin', previewCss: 'radial-gradient(circle, #f97316, #ef4444)' },
+            { id: 'skin_fire', name: 'Fireball', price: 100, category: 'skin', previewCss: 'radial-gradient(circle at 30% 30%, #fff 0%, #fed7aa 20%, #f97316 50%, #ea580c 80%, #991b1b 100%)', extraClass: 'skin-fire-fx' },
             { id: 'skin_snow', name: 'Snowball', price: 50, category: 'skin', previewCss: 'radial-gradient(circle, #f8fafc, #3b82f6)' },
             { id: 'skin_neon', name: 'Neon Glow', price: 150, category: 'skin', previewCss: 'radial-gradient(circle, #f472b6, #a855f7)' },
             // Backgrounds
@@ -2358,7 +2384,7 @@
 
                 let previewHtml = '';
                 if (i.previewCss) {
-                    previewHtml = `<div style="width:80px; height:80px; background:${i.previewCss}; border-radius:50%; margin: 10px auto; border:3px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1);"></div>`;
+                    previewHtml = `<div class="${i.extraClass || ''}" style="width:80px; height:80px; background:${i.previewCss}; border-radius:50%; margin: 10px auto; border:3px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1);"></div>`;
                 } else if (i.previewImg) {
                     previewHtml = `<img src="${i.previewImg}" style="width:100%; height:100px; object-fit:cover; border-radius:8px; margin-bottom:10px; border:1px solid #ddd;">`;
                 }
@@ -2669,8 +2695,9 @@
 
             // Set meteor color based on difficulty or skin
             const equippedSkin = userData.equipped.skin;
-            if (equippedSkin === 'skin_fire') el.style.background = 'radial-gradient(circle, #f97316, #ef4444)';
-            else if (equippedSkin === 'skin_snow') el.style.background = 'radial-gradient(circle, #f8fafc, #3b82f6)';
+            if (equippedSkin === 'skin_fire') {
+                el.classList.add('skin-fire-fx');
+            } else if (equippedSkin === 'skin_snow') el.style.background = 'radial-gradient(circle, #f8fafc, #3b82f6)';
             else if (equippedSkin === 'skin_neon') el.style.background = 'radial-gradient(circle, #f472b6, #a855f7)';
             else {
                 if (diff === 'hard') el.style.background = 'rgba(239, 68, 68, 0.9)'; // Red

@@ -634,6 +634,90 @@
             background: #ef4444;
         }
 
+        .calc-toggle-btn {
+            position: fixed;
+            top: 70px;
+            right: 180px;
+            z-index: 999;
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: none;
+            background: var(--nav-blue);
+            color: white;
+            font-weight: bold;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s;
+        }
+
+        .calc-toggle-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            background: #2563eb;
+        }
+
+        /* Calculator Modal Specifics */
+        .calc-display {
+            width: 100%;
+            height: 60px;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 0 15px;
+            font-size: 1.5rem;
+            font-family: 'Courier New', Courier, monospace;
+            color: #1e293b;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        .calc-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .btn-calc {
+            padding: 15px;
+            border-radius: 10px;
+            border: none;
+            background: #f1f5f9;
+            color: #1e293b;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+
+        .btn-calc:hover {
+            background: #e2e8f0;
+            transform: scale(1.05);
+        }
+
+        .btn-calc.operator {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .btn-calc.action {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+
+        .btn-calc.equals {
+            background: #10b981;
+            color: white;
+            grid-column: span 2;
+        }
+
         /* Focus Mode Styles */
         .focus-mode-disabled {
             pointer-events: none !important;
@@ -1430,272 +1514,311 @@
         </div>
     </nav>
 
-    <div id="main-container" style="display:none;">
-        <button id="sound-toggle" class="sound-btn on" onclick="toggleSound()">
-            <span>🔊</span> Audio: ON
-        </button>
+    <!-- Calculator Modal -->
+    <div class="modal" id="calculator-modal">
+        <div class="modal-content" style="max-width: 350px;">
+            <div id="calc-title-container">
+                <h2 id="calc-title">Calculator 🧮</h2>
+            </div>
+            <div id="calc-body">
+                <div class="calc-display" id="calc-display">0</div>
+                <div class="calc-grid">
+                    <button class="btn-calc action" onclick="calcClear()">AC</button>
+                    <button class="btn-calc action" onclick="calcDelete()">DEL</button>
+                    <button class="btn-calc operator" onclick="calcAppend('/')">/</button>
+                    <button class="btn-calc operator" onclick="calcAppend('*')">×</button>
 
-        <div class="container">
-            <!-- Home Section -->
-            <section id="section-home" class="section active">
-                <div class="dashboard-grid">
-                    <!-- Row 1 -->
-                    <div class="card">
-                        <div class="card-top" id="welcome-avatar-icon">👋</div>
-                        <div class="card-bottom">
-                            <div class="card-title">WELCOME</div>
-                            <div class="card-subtitle" style="color:var(--cyan);">Math Master</div>
-                            <div class="card-desc">Choose a challenge and start training your brain today.</div>
-                            <button class="btn-card" onclick="showSection('classic')">Quick Start</button>
-                        </div>
-                    </div>
+                    <button class="btn-calc" onclick="calcAppend('7')">7</button>
+                    <button class="btn-calc" onclick="calcAppend('8')">8</button>
+                    <button class="btn-calc" onclick="calcAppend('9')">9</button>
+                    <button class="btn-calc operator" onclick="calcAppend('-')">-</button>
 
-                    <div class="card">
-                        <div class="card-top">➕</div>
-                        <div class="card-bottom">
-                            <div class="card-title">CLASSIC</div>
-                            <div class="card-subtitle">Practice</div>
-                            <div class="card-desc">Master arithmetic operations at your own pace.</div>
-                            <button class="btn-card" onclick="showSection('classic')">Play Now</button>
-                        </div>
-                    </div>
+                    <button class="btn-calc" onclick="calcAppend('4')">4</button>
+                    <button class="btn-calc" onclick="calcAppend('5')">5</button>
+                    <button class="btn-calc" onclick="calcAppend('6')">6</button>
+                    <button class="btn-calc operator" onclick="calcAppend('+')">+</button>
 
-                    <div class="card">
-                        <div class="card-top">📝</div>
-                        <div class="card-bottom">
-                            <div class="card-title">WORD PROBLEM</div>
-                            <div class="card-subtitle">Real World</div>
-                            <div class="card-desc">Solve interesting scenarios involving logic.</div>
-                            <button class="btn-card" onclick="showSection('word')">Solve</button>
-                        </div>
-                    </div>
+                    <button class="btn-calc" onclick="calcAppend('1')">1</button>
+                    <button class="btn-calc" onclick="calcAppend('2')">2</button>
+                    <button class="btn-calc" onclick="calcAppend('3')">3</button>
+                    <button class="btn-calc equals" onclick="calcResult()">=</button>
 
-                    <!-- Row 2 -->
-                    <div class="card">
-                        <div class="card-top">🎮</div>
-                        <div class="card-bottom">
-                            <div class="card-title">ARCADE</div>
-                            <div class="card-subtitle">Action</div>
-                            <div class="card-desc">Defend your heart from falling meteors!</div>
-                            <button class="btn-card" onclick="showSection('arcade')">Play Arcade</button>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-top">♾️</div>
-                        <div class="card-bottom">
-                            <div class="card-title">INFINITE</div>
-                            <div class="card-subtitle">Survival</div>
-                            <div class="card-desc">How long can you survive the meteor rain?</div>
-                            <button class="btn-card" onclick="showSection('infinite')">Play Infinite</button>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-top">🛒</div>
-                        <div class="card-bottom">
-                            <div class="card-title">MARKET</div>
-                            <div class="card-subtitle">Shop</div>
-                            <div class="card-desc">Buy new skins and backgrounds with your coins.</div>
-                            <button class="btn-card" onclick="openModal('shop-modal')">Open Market</button>
-                        </div>
-                    </div>
-
-                    <!-- Row 3 -->
-                    <div class="card card-full">
-                        <div class="card-top" style="height:35%; font-size:3.5rem;">🚧</div>
-                        <div class="card-bottom" style="padding:40px;">
-                            <div class="card-title">COMING SOON</div>
-                            <div class="card-subtitle" style="color:#64748b;">Stay Tuned</div>
-                            <div class="card-desc">New game modes and features are in development!</div>
-                        </div>
-                    </div>
+                    <button class="btn-calc" style="grid-column: span 2;" onclick="calcAppend('0')">0</button>
+                    <button class="btn-calc" onclick="calcAppend('.')">.</button>
                 </div>
-            </section>
-
-            <!-- Classic Section -->
-            <section id="section-classic" class="section">
-                <div class="game-panel">
-                    <h2 class="mode-header">Classic Math 🍎<button class="help-btn"
-                            onclick="showModeInstructions('classic')">📖</button></h2>
-
-                    <div class="op-selector">
-                        <button class="btn-choice active" onclick="setOp('all')">All</button>
-                        <button class="btn-choice" onclick="setOp('add')">Addition</button>
-                        <button class="btn-choice" onclick="setOp('sub')">Subtraction</button>
-                        <button class="btn-choice" onclick="setOp('mul')">Multiplication</button>
-                        <button class="btn-choice" onclick="setOp('div')">Division</button>
-                    </div>
-
-                    <div class="op-selector">
-                        <button class="btn-choice active" onclick="setDiff('easy')">Easy</button>
-                        <button class="btn-choice" onclick="setDiff('med')">Medium</button>
-                        <button class="btn-choice" onclick="setDiff('hard')">Hard</button>
-                    </div>
-
-                    <div id="classic-result" class="game-result"></div>
-
-                    <p id="classic-stats-line" class="stats"
-                        style="font-weight: bold; font-size: 1.2rem; margin: 20px 0; color: #1e3a8a; position: relative;">
-                        Time: <span id="classic-timer">60</span>s &nbsp;
-                        <span id="classic-penalty-anchor"></span>
-                        Score: <span id="classic-score">0</span> &nbsp;
-                        <span style="color: #64748b; font-size: 0.9rem;">Best: <span id="classic-high">0</span></span>
-                    <div class="shield-indicator" id="classic-shield"
-                        style="left: -10px; top: -10px; border-radius: 8px;"></div>
-                    </p>
-
-                    <div id="classic-play-area">
-                        <button class="btn-game" id="classic-start" onclick="startClassic()">Start Game</button>
-                        <div id="classic-active-game" style="display:none;">
-                            <div class="question-box" id="classic-question">READY?</div>
-                            <input type="number" id="classic-input" class="game-input"
-                                onkeydown="if(event.key==='Enter') checkClassic()">
-                            <button class="btn-game" onclick="checkClassic()">Submit</button>
-                            <br><br>
-                            <button class="btn-game" style="background:var(--btn-blue); font-size:1rem;"
-                                onclick="endGame('Game Over')">End Game</button>
-                        </div>
-                        <button id="classic-skill-btn" class="skill-btn" style="display:none;"
-                            onclick="useSkill()">🦊</button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Arcade Section -->
-            <section id="section-arcade" class="section">
-                <div class="game-panel">
-                    <h2 class="mode-header">Arcade Meteors 🐱<button class="help-btn"
-                            onclick="showModeInstructions('arcade')">📖</button></h2>
-
-                    <div class="op-selector">
-                        <button class="btn-choice active" onclick="setArcadeDiff('easy')">Easy</button>
-                        <button class="btn-choice" onclick="setArcadeDiff('med')">Medium</button>
-                        <button class="btn-choice" onclick="setArcadeDiff('hard')">Hard</button>
-                    </div>
-
-                    <div id="arcade-result" class="game-result"></div>
-
-                    <div id="arcade-stats-line" class="stats-bar" style="position: relative;">
-                        <span>Time: <span id="arcade-timer">0</span>s</span>
-                        <span id="arcade-penalty-anchor"></span>
-                        <span>Lives: <span id="arcade-lives">3</span></span>
-                        <span>Score: <span id="arcade-score">0</span></span>
-                        <span style="color: #64748b; font-size: 0.9rem;">Best: <span id="arcade-high">0</span></span>
-                    </div>
-                    <div id="arcade-arena">
-                        <div class="arena-overlay"></div>
-                        <div class="player-heart">❤️<div class="shield-indicator" id="arcade-shield"></div>
-                        </div>
-                        <button id="arcade-skill-btn" class="skill-btn" style="display:none;"
-                            onclick="useSkill()">🦊</button>
-                    </div>
-                    <div id="arcade-controls" style="margin-top:20px;">
-                        <div id="arcade-active-controls" style="display:none; margin-bottom:15px;">
-                            <input type="number" id="arcade-input" class="game-input" placeholder="Type meteor answer"
-                                onkeydown="if(event.key==='Enter') checkArcade()">
-                            <button class="btn-game" onclick="checkArcade()">Zap!</button>
-                        </div>
-                        <button class="btn-game" id="arcade-start" onclick="startArcade()">Start Arcade</button>
-                        <button class="btn-game" id="arcade-end"
-                            style="display:none; background:var(--btn-blue); font-size:1rem;"
-                            onclick="endGame('Game Over')">End
-                            Game</button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Word Problems Section -->
-            <section id="section-word" class="section">
-                <div class="game-panel">
-                    <h2 class="mode-header">Word Problems 💫<button class="help-btn"
-                            onclick="showModeInstructions('word')">📖</button></h2>
-
-                    <div class="op-selector">
-                        <button class="btn-choice active" onclick="setWordOp('all')">All</button>
-                        <button class="btn-choice" onclick="setWordOp('add')">Addition</button>
-                        <button class="btn-choice" onclick="setWordOp('sub')">Subtraction</button>
-                        <button class="btn-choice" onclick="setWordOp('mul')">Multiplication</button>
-                        <button class="btn-choice" onclick="setWordOp('div')">Division</button>
-                    </div>
-
-                    <div class="op-selector">
-                        <button class="btn-choice active" onclick="setWordDiff('easy')">Easy</button>
-                        <button class="btn-choice" onclick="setWordDiff('med')">Medium</button>
-                        <button class="btn-choice" onclick="setWordDiff('hard')">Hard</button>
-                    </div>
-
-                    <div id="word-result" class="game-result"></div>
-
-                    <p id="word-stats-line" class="stats"
-                        style="font-weight: bold; font-size: 1.2rem; margin: 20px 0; color: #1e3a8a; position: relative;">
-                        Time: <span id="word-timer">60</span>s &nbsp;
-                        <span id="word-penalty-anchor"></span>
-                        Score: <span id="word-score">0</span> &nbsp;
-                        <span style="color: #64748b; font-size: 0.9rem;">Best: <span id="word-high">0</span></span>
-                    <div class="shield-indicator" id="word-shield" style="left: -10px; top: -10px; border-radius: 8px;">
-                    </div>
-                    </p>
-                    <div id="word-play-area">
-                        <button class="btn-game" id="word-start" onclick="startWord()">Start Game</button>
-                        <div id="word-active-game" style="display:none;">
-                            <div class="question-box" id="word-question" style="font-size: 1.5rem; line-height: 1.4;">
-                                READY?
-                            </div>
-                            <input type="number" id="word-input" class="game-input"
-                                onkeydown="if(event.key==='Enter') checkWord()">
-                            <button class="btn-game" onclick="checkWord()">Submit</button>
-                            <br><br>
-                            <button class="btn-game" style="background:var(--btn-blue); font-size:1rem;"
-                                onclick="endGame('Game Over')">End Game</button>
-                        </div>
-                        <button id="word-skill-btn" class="skill-btn" style="display:none;"
-                            onclick="useSkill()">🦊</button>
-                    </div>
-                </div>
-            </section>
-
-            <section id="section-infinite" class="section">
-                <div class="game-panel">
-                    <h2 class="mode-header">Infinite Arcade ♾️<button class="help-btn"
-                            onclick="showModeInstructions('infinite')">📖</button></h2>
-
-                    <div id="infinite-stats-line" class="stats-bar">
-                        <span>Lives: <span id="infinite-lives">5</span></span>
-                        <span>Time: <span id="infinite-timer">0</span>s</span>
-                        <span style="color: #64748b; font-size: 0.9rem;">Best: <span id="infinite-high">0</span>s</span>
-                    </div>
-
-                    <div class="op-selector" id="infinite-lives-selector">
-                        <button class="btn-choice active" onclick="setInfiniteLives(5)">5 Hearts</button>
-                        <button class="btn-choice" onclick="setInfiniteLives(3)">3 Hearts</button>
-                        <button class="btn-choice" onclick="setInfiniteLives(1)">1 Heart</button>
-                    </div>
-
-                    <div id="infinite-result" class="game-result"></div>
-                    <p style="margin-bottom: 20px;">The falling speeds increase forever! How long can you survive?</p>
-                    <div id="infinite-arena">
-                        <div class="arena-overlay"></div>
-                        <div class="player-heart">❤️<div class="shield-indicator" id="infinite-shield"></div>
-                        </div>
-                        <button id="infinite-skill-btn" class="skill-btn" style="display:none;"
-                            onclick="useSkill()">🦊</button>
-                    </div>
-                    <div id="infinite-controls" style="margin-top:20px;">
-                        <div id="infinite-active-controls" style="display:none; margin-bottom:15px;">
-                            <input type="number" id="infinite-input" class="game-input" placeholder="Type meteor answer"
-                                onkeydown="if(event.key==='Enter') checkInfinite()">
-                            <button class="btn-game" onclick="checkInfinite()">Zap!</button>
-                        </div>
-                        <button class="btn-game" id="infinite-start" onclick="startInfinite()">Play Infinite</button>
-                        <button class="btn-game" id="infinite-end"
-                            style="display:none; background:var(--btn-blue); font-size:1rem;"
-                            onclick="endGame('Game Over')">End
-                            Game</button>
-                    </div>
-                </div>
-            </section>
+            </div>
+            <button class="btn-game" style="margin-top:20px; width:100%; border:none; background:#94a3b8;"
+                onclick="closeModal('calculator-modal')">Close</button>
         </div>
+    </div>
+    <button id="calc-toggle" class="calc-toggle-btn" onclick="openModal('calculator-modal')">
+        <span>🧮</span> Calculator
+    </button>
+
+    <button id="sound-toggle" class="sound-btn on" onclick="toggleSound()">
+        <span>🔊</span> Audio: ON
+    </button>
+
+    <div class="container">
+        <!-- Home Section -->
+        <section id="section-home" class="section active">
+            <div class="dashboard-grid">
+                <!-- Row 1 -->
+                <div class="card">
+                    <div class="card-top" id="welcome-avatar-icon">👋</div>
+                    <div class="card-bottom">
+                        <div class="card-title">WELCOME</div>
+                        <div class="card-subtitle" style="color:var(--cyan);">Math Master</div>
+                        <div class="card-desc">Choose a challenge and start training your brain today.</div>
+                        <button class="btn-card" onclick="showSection('classic')">Quick Start</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-top">➕</div>
+                    <div class="card-bottom">
+                        <div class="card-title">CLASSIC</div>
+                        <div class="card-subtitle">Practice</div>
+                        <div class="card-desc">Master arithmetic operations at your own pace.</div>
+                        <button class="btn-card" onclick="showSection('classic')">Play Now</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-top">📝</div>
+                    <div class="card-bottom">
+                        <div class="card-title">WORD PROBLEM</div>
+                        <div class="card-subtitle">Real World</div>
+                        <div class="card-desc">Solve interesting scenarios involving logic.</div>
+                        <button class="btn-card" onclick="showSection('word')">Solve</button>
+                    </div>
+                </div>
+
+                <!-- Row 2 -->
+                <div class="card">
+                    <div class="card-top">🎮</div>
+                    <div class="card-bottom">
+                        <div class="card-title">ARCADE</div>
+                        <div class="card-subtitle">Action</div>
+                        <div class="card-desc">Defend your heart from falling meteors!</div>
+                        <button class="btn-card" onclick="showSection('arcade')">Play Arcade</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-top">♾️</div>
+                    <div class="card-bottom">
+                        <div class="card-title">INFINITE</div>
+                        <div class="card-subtitle">Survival</div>
+                        <div class="card-desc">How long can you survive the meteor rain?</div>
+                        <button class="btn-card" onclick="showSection('infinite')">Play Infinite</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-top">🛒</div>
+                    <div class="card-bottom">
+                        <div class="card-title">MARKET</div>
+                        <div class="card-subtitle">Shop</div>
+                        <div class="card-desc">Buy new skins and backgrounds with your coins.</div>
+                        <button class="btn-card" onclick="openModal('shop-modal')">Open Market</button>
+                    </div>
+                </div>
+
+                <!-- Row 3 -->
+                <div class="card card-full">
+                    <div class="card-top" style="height:35%; font-size:3.5rem;">🚧</div>
+                    <div class="card-bottom" style="padding:40px;">
+                        <div class="card-title">COMING SOON</div>
+                        <div class="card-subtitle" style="color:#64748b;">Stay Tuned</div>
+                        <div class="card-desc">New game modes and features are in development!</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Classic Section -->
+        <section id="section-classic" class="section">
+            <div class="game-panel">
+                <h2 class="mode-header">Classic Math 🍎<button class="help-btn"
+                        onclick="showModeInstructions('classic')">📖</button></h2>
+
+                <div class="op-selector">
+                    <button class="btn-choice active" onclick="setOp('all')">All</button>
+                    <button class="btn-choice" onclick="setOp('add')">Addition</button>
+                    <button class="btn-choice" onclick="setOp('sub')">Subtraction</button>
+                    <button class="btn-choice" onclick="setOp('mul')">Multiplication</button>
+                    <button class="btn-choice" onclick="setOp('div')">Division</button>
+                </div>
+
+                <div class="op-selector">
+                    <button class="btn-choice active" onclick="setDiff('easy')">Easy</button>
+                    <button class="btn-choice" onclick="setDiff('med')">Medium</button>
+                    <button class="btn-choice" onclick="setDiff('hard')">Hard</button>
+                </div>
+
+                <div id="classic-result" class="game-result"></div>
+
+                <p id="classic-stats-line" class="stats"
+                    style="font-weight: bold; font-size: 1.2rem; margin: 20px 0; color: #1e3a8a; position: relative;">
+                    Time: <span id="classic-timer">60</span>s &nbsp;
+                    <span id="classic-penalty-anchor"></span>
+                    Score: <span id="classic-score">0</span> &nbsp;
+                    <span style="color: #64748b; font-size: 0.9rem;">Best: <span id="classic-high">0</span></span>
+                <div class="shield-indicator" id="classic-shield" style="left: -10px; top: -10px; border-radius: 8px;">
+                </div>
+                </p>
+
+                <div id="classic-play-area">
+                    <button class="btn-game" id="classic-start" onclick="startClassic()">Start Game</button>
+                    <div id="classic-active-game" style="display:none;">
+                        <div class="question-box" id="classic-question">READY?</div>
+                        <input type="number" id="classic-input" class="game-input"
+                            onkeydown="if(event.key==='Enter') checkClassic()">
+                        <button class="btn-game" onclick="checkClassic()">Submit</button>
+                        <br><br>
+                        <button class="btn-game" style="background:var(--btn-blue); font-size:1rem;"
+                            onclick="endGame('Game Over')">End Game</button>
+                    </div>
+                    <button id="classic-skill-btn" class="skill-btn" style="display:none;"
+                        onclick="useSkill()">🦊</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Arcade Section -->
+        <section id="section-arcade" class="section">
+            <div class="game-panel">
+                <h2 class="mode-header">Arcade Meteors 🐱<button class="help-btn"
+                        onclick="showModeInstructions('arcade')">📖</button></h2>
+
+                <div class="op-selector">
+                    <button class="btn-choice active" onclick="setArcadeDiff('easy')">Easy</button>
+                    <button class="btn-choice" onclick="setArcadeDiff('med')">Medium</button>
+                    <button class="btn-choice" onclick="setArcadeDiff('hard')">Hard</button>
+                </div>
+
+                <div id="arcade-result" class="game-result"></div>
+
+                <div id="arcade-stats-line" class="stats-bar" style="position: relative;">
+                    <span>Time: <span id="arcade-timer">0</span>s</span>
+                    <span id="arcade-penalty-anchor"></span>
+                    <span>Lives: <span id="arcade-lives">3</span></span>
+                    <span>Score: <span id="arcade-score">0</span></span>
+                    <span style="color: #64748b; font-size: 0.9rem;">Best: <span id="arcade-high">0</span></span>
+                </div>
+                <div id="arcade-arena">
+                    <div class="arena-overlay"></div>
+                    <div class="player-heart">❤️<div class="shield-indicator" id="arcade-shield"></div>
+                    </div>
+                    <button id="arcade-skill-btn" class="skill-btn" style="display:none;"
+                        onclick="useSkill()">🦊</button>
+                </div>
+                <div id="arcade-controls" style="margin-top:20px;">
+                    <div id="arcade-active-controls" style="display:none; margin-bottom:15px;">
+                        <input type="number" id="arcade-input" class="game-input" placeholder="Type meteor answer"
+                            onkeydown="if(event.key==='Enter') checkArcade()">
+                        <button class="btn-game" onclick="checkArcade()">Zap!</button>
+                    </div>
+                    <button class="btn-game" id="arcade-start" onclick="startArcade()">Start Arcade</button>
+                    <button class="btn-game" id="arcade-end"
+                        style="display:none; background:var(--btn-blue); font-size:1rem;"
+                        onclick="endGame('Game Over')">End
+                        Game</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Word Problems Section -->
+        <section id="section-word" class="section">
+            <div class="game-panel">
+                <h2 class="mode-header">Word Problems 💫<button class="help-btn"
+                        onclick="showModeInstructions('word')">📖</button></h2>
+
+                <div class="op-selector">
+                    <button class="btn-choice active" onclick="setWordOp('all')">All</button>
+                    <button class="btn-choice" onclick="setWordOp('add')">Addition</button>
+                    <button class="btn-choice" onclick="setWordOp('sub')">Subtraction</button>
+                    <button class="btn-choice" onclick="setWordOp('mul')">Multiplication</button>
+                    <button class="btn-choice" onclick="setWordOp('div')">Division</button>
+                </div>
+
+                <div class="op-selector">
+                    <button class="btn-choice active" onclick="setWordDiff('easy')">Easy</button>
+                    <button class="btn-choice" onclick="setWordDiff('med')">Medium</button>
+                    <button class="btn-choice" onclick="setWordDiff('hard')">Hard</button>
+                </div>
+
+                <div id="word-result" class="game-result"></div>
+
+                <p id="word-stats-line" class="stats"
+                    style="font-weight: bold; font-size: 1.2rem; margin: 20px 0; color: #1e3a8a; position: relative;">
+                    Time: <span id="word-timer">60</span>s &nbsp;
+                    <span id="word-penalty-anchor"></span>
+                    Score: <span id="word-score">0</span> &nbsp;
+                    <span style="color: #64748b; font-size: 0.9rem;">Best: <span id="word-high">0</span></span>
+                <div class="shield-indicator" id="word-shield" style="left: -10px; top: -10px; border-radius: 8px;">
+                </div>
+                </p>
+                <div id="word-play-area">
+                    <button class="btn-game" id="word-start" onclick="startWord()">Start Game</button>
+                    <div id="word-active-game" style="display:none;">
+                        <div class="question-box" id="word-question" style="font-size: 1.5rem; line-height: 1.4;">
+                            READY?
+                        </div>
+                        <input type="number" id="word-input" class="game-input"
+                            onkeydown="if(event.key==='Enter') checkWord()">
+                        <button class="btn-game" onclick="checkWord()">Submit</button>
+                        <br><br>
+                        <button class="btn-game" style="background:var(--btn-blue); font-size:1rem;"
+                            onclick="endGame('Game Over')">End Game</button>
+                    </div>
+                    <button id="word-skill-btn" class="skill-btn" style="display:none;" onclick="useSkill()">🦊</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-infinite" class="section">
+            <div class="game-panel">
+                <h2 class="mode-header">Infinite Arcade ♾️<button class="help-btn"
+                        onclick="showModeInstructions('infinite')">📖</button></h2>
+
+                <div id="infinite-stats-line" class="stats-bar">
+                    <span>Lives: <span id="infinite-lives">5</span></span>
+                    <span>Time: <span id="infinite-timer">0</span>s</span>
+                    <span style="color: #64748b; font-size: 0.9rem;">Best: <span id="infinite-high">0</span>s</span>
+                </div>
+
+                <div class="op-selector" id="infinite-lives-selector">
+                    <button class="btn-choice active" onclick="setInfiniteLives(5)">5 Hearts</button>
+                    <button class="btn-choice" onclick="setInfiniteLives(3)">3 Hearts</button>
+                    <button class="btn-choice" onclick="setInfiniteLives(1)">1 Heart</button>
+                </div>
+
+                <div id="infinite-result" class="game-result"></div>
+                <p style="margin-bottom: 20px;">The falling speeds increase forever! How long can you survive?</p>
+                <div id="infinite-arena">
+                    <div class="arena-overlay"></div>
+                    <div class="player-heart">❤️<div class="shield-indicator" id="infinite-shield"></div>
+                    </div>
+                    <button id="infinite-skill-btn" class="skill-btn" style="display:none;"
+                        onclick="useSkill()">🦊</button>
+                </div>
+                <div id="infinite-controls" style="margin-top:20px;">
+                    <div id="infinite-active-controls" style="display:none; margin-bottom:15px;">
+                        <input type="number" id="infinite-input" class="game-input" placeholder="Type meteor answer"
+                            onkeydown="if(event.key==='Enter') checkInfinite()">
+                        <button class="btn-game" onclick="checkInfinite()">Zap!</button>
+                    </div>
+                    <button class="btn-game" id="infinite-start" onclick="startInfinite()">Play Infinite</button>
+                    <button class="btn-game" id="infinite-end"
+                        style="display:none; background:var(--btn-blue); font-size:1rem;"
+                        onclick="endGame('Game Over')">End
+                        Game</button>
+                </div>
+            </div>
+        </section>
+    </div>
     </div>
 
     <!-- Modals -->
@@ -2414,6 +2537,42 @@
                 t.classList.toggle('active', t.getAttribute('onclick').includes(`'${cat}'`));
             });
             renderShop();
+        }
+
+        // Calculator Logic
+        let calcExpr = '';
+        const calcDisplay = () => document.getElementById('calc-display');
+
+        function calcAppend(char) {
+            playSound('click');
+            if (calcExpr === '0' && !isNaN(char)) calcExpr = '';
+            calcExpr += char;
+            calcDisplay().innerText = calcExpr || '0';
+        }
+
+        function calcClear() {
+            playSound('click');
+            calcExpr = '';
+            calcDisplay().innerText = '0';
+        }
+
+        function calcDelete() {
+            playSound('click');
+            calcExpr = calcExpr.slice(0, -1);
+            calcDisplay().innerText = calcExpr || '0';
+        }
+
+        function calcResult() {
+            playSound('click');
+            try {
+                // Using Function to safely evaluate string expression
+                const res = Function('"use strict";return (' + calcExpr + ')')();
+                calcExpr = String(Math.round(res * 1000) / 1000); // 3 decimal places
+                calcDisplay().innerText = calcExpr;
+            } catch (e) {
+                calcDisplay().innerText = 'Error';
+                calcExpr = '';
+            }
         }
 
         function renderShop() {

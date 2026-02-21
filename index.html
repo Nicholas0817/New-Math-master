@@ -1435,6 +1435,172 @@
             }
         }
 
+        /* Bombastic Skill Visuals */
+        .skill-shockwave {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            border: 5px solid white;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 1000;
+            animation: shockwave-expand 0.8s ease-out forwards;
+        }
+
+        @keyframes shockwave-expand {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 1;
+                border-width: 20px;
+            }
+
+            100% {
+                width: 200%;
+                height: 200%;
+                opacity: 0;
+                border-width: 2px;
+            }
+        }
+
+        .skill-flare {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+            opacity: 0;
+            animation: flare-flash 0.6s ease-out forwards;
+        }
+
+        @keyframes flare-flash {
+            0% {
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 0.8;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+
+        .repair-scanline {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: #10b981;
+            box-shadow: 0 0 15px #10b981, 0 0 30px #10b981;
+            z-index: 1001;
+            pointer-events: none;
+            animation: scanline-move 1.2s ease-in-out forwards;
+        }
+
+        @keyframes scanline-move {
+            0% {
+                top: 0;
+                opacity: 0;
+            }
+
+            20% {
+                opacity: 1;
+            }
+
+            80% {
+                opacity: 1;
+            }
+
+            100% {
+                top: 100%;
+                opacity: 0;
+            }
+        }
+
+        .shatter-particle {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background: #f97316;
+            pointer-events: none;
+            z-index: 998;
+            animation: particle-shatter 0.6s ease-out forwards;
+        }
+
+        @keyframes particle-shatter {
+            0% {
+                transform: scale(1) translate(0, 0) rotate(0);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(0) translate(var(--tx), var(--ty)) rotate(var(--tr));
+                opacity: 0;
+            }
+        }
+
+        .chrono-distortion {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backdrop-filter: contrast(1.5) hue-rotate(90deg);
+            pointer-events: none;
+            z-index: 997;
+            animation: distortion-flicker 0.2s infinite;
+        }
+
+        @keyframes distortion-flicker {
+            0% {
+                opacity: 0.2;
+                transform: translateX(-2px);
+            }
+
+            50% {
+                opacity: 0.4;
+                transform: translateX(2px);
+            }
+
+            100% {
+                opacity: 0.2;
+                transform: translateX(-2px);
+            }
+        }
+
+        .rainbow-trail {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff);
+            background-size: 400% 400%;
+            opacity: 0.2;
+            pointer-events: none;
+            z-index: 996;
+            animation: rainbow-shift 2s linear infinite;
+        }
+
+        @keyframes rainbow-shift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
         /* Instruction Styles */
         .help-btn {
             background: rgba(255, 255, 255, 0.2);
@@ -2714,7 +2880,6 @@
             const avatar = SHOP_ITEMS.find(i => i.id === avatarId);
             if (!avatar || !avatar.skill) return;
 
-            // Visual setup - Find the target arena or game panel
             const mode = activeGame.mode;
             const arena = document.getElementById(mode + '-arena') || document.querySelector(`#section-${mode} .game-panel`);
             if (!arena) return;
@@ -2723,33 +2888,32 @@
             activeGame.skillAvailable = false;
             updateSkillButton();
 
+            // Create global flare/flash effect
+            const flare = document.createElement('div');
+            flare.className = 'skill-flare';
+            arena.appendChild(flare);
+            setTimeout(() => flare.remove(), 600);
+
             if (avatarId === 'av_fox') {
+                flare.style.background = 'rgba(37, 99, 235, 0.4)'; // Blue flash
                 activeGame.speedMultiplier = 0.5;
-                activeGame.timeMultiplier = 0.4; // 60% slower time
+                activeGame.timeMultiplier = 0.4;
                 activeGame.skillActive = true;
 
-                // NEW Visual Effects: Clockwork Chrono Distortion
-                document.documentElement.classList.add('global-slow-mo-active');
+                const distortion = document.createElement('div');
+                distortion.className = 'chrono-distortion';
+                arena.appendChild(distortion);
 
-                const auraContainer = document.createElement('div');
-                auraContainer.className = 'chrono-aura-container';
-                auraContainer.innerHTML = `
-                    <div class="chrono-gear"></div>
-                    <div class="chrono-gear-small"></div>
-                    <div class="chrono-pulse"></div>
-                    <div class="scanline-overlay"></div>
-                `;
-                arena.appendChild(auraContainer);
+                const shockwave = document.createElement('div');
+                shockwave.className = 'skill-shockwave';
+                shockwave.style.borderColor = '#60a5fa';
+                arena.appendChild(shockwave);
 
-                // Initial time-blur effect (using glitch-shake CSS if still available or just simple pulse)
-                arena.classList.add('screen-shake');
-                setTimeout(() => arena.classList.remove('screen-shake'), 400);
-
-                // Ticking Clock Particles
                 const clockEmojis = ['🕒', '🕰️', '⌛', '⏱️', '🕙'];
                 let clockInt = setInterval(() => {
                     if (!activeGame.skillActive) {
                         clearInterval(clockInt);
+                        distortion.remove();
                         return;
                     }
                     const clock = document.createElement('div');
@@ -2757,69 +2921,130 @@
                     clock.innerText = clockEmojis[Math.floor(Math.random() * clockEmojis.length)];
                     clock.style.left = Math.random() * 90 + '%';
                     clock.style.top = Math.random() * 80 + '%';
+                    clock.style.fontSize = '2rem';
+                    clock.style.filter = 'drop-shadow(0 0 10px #60a5fa)';
                     arena.appendChild(clock);
                     setTimeout(() => clock.remove(), 1000);
-                }, 400);
+                }, 300);
 
                 setTimeout(() => {
                     activeGame.speedMultiplier = 1.0;
                     activeGame.timeMultiplier = 1.0;
                     activeGame.skillActive = false;
-                    document.documentElement.classList.remove('global-slow-mo-active');
-                    auraContainer.remove();
+                    distortion.remove();
+                    shockwave.remove();
                     clearInterval(clockInt);
                 }, 5000);
             } else if (avatarId === 'av_robot') {
+                flare.style.background = 'rgba(16, 185, 129, 0.4)'; // Green flash
                 activeGame.lives++;
 
-                // Visual Effect: Life pulse/pop
+                const scanline = document.createElement('div');
+                scanline.className = 'repair-scanline';
+                arena.appendChild(scanline);
+                setTimeout(() => scanline.remove(), 1200);
+
                 const pop = document.createElement('span');
                 pop.className = 'life-add-pop';
                 pop.innerText = '+❤️';
                 pop.style.left = '50%';
                 pop.style.top = '40%';
+                pop.style.fontSize = '3rem';
+                pop.style.textShadow = '0 0 20px #10b981';
                 arena.appendChild(pop);
                 setTimeout(() => pop.remove(), 1200);
 
                 updateStats();
             } else if (avatarId === 'av_dragon') {
-                // Visual Effect: Screen shake and Dragon fire flash
+                flare.style.background = 'rgba(239, 68, 68, 0.6)'; // Red flash
                 arena.classList.add('screen-shake');
-                const flash = document.createElement('div');
-                flash.className = 'dragon-flash';
-                arena.appendChild(flash);
 
-                arcadeMeteors.forEach(m => m.el.remove());
+                const shockwave = document.createElement('div');
+                shockwave.className = 'skill-shockwave';
+                shockwave.style.borderColor = '#f97316';
+                shockwave.style.borderWidth = '10px';
+                arena.appendChild(shockwave);
+
+                // Shatter effect for each meteor
+                arcadeMeteors.forEach(m => {
+                    const rect = m.el.getBoundingClientRect();
+                    const arenaRect = arena.getBoundingClientRect();
+                    const centerX = rect.left - arenaRect.left + rect.width / 2;
+                    const centerY = rect.top - arenaRect.top + rect.height / 2;
+
+                    for (let i = 0; i < 8; i++) {
+                        const p = document.createElement('div');
+                        p.className = 'shatter-particle';
+                        p.style.left = centerX + 'px';
+                        p.style.top = centerY + 'px';
+                        p.style.setProperty('--tx', (Math.random() - 0.5) * 300 + 'px');
+                        p.style.setProperty('--ty', (Math.random() - 0.5) * 300 + 'px');
+                        p.style.setProperty('--tr', Math.random() * 720 + 'deg');
+                        p.style.background = Math.random() > 0.5 ? '#f97316' : '#ef4444';
+                        arena.appendChild(p);
+                        setTimeout(() => p.remove(), 600);
+                    }
+                    m.el.remove();
+                });
                 arcadeMeteors = [];
 
                 setTimeout(() => {
                     arena.classList.remove('screen-shake');
-                    flash.remove();
-                }, 600);
+                    shockwave.remove();
+                }, 800);
             } else if (avatarId === 'av_robin') {
+                flare.style.background = 'rgba(251, 191, 36, 0.4)'; // Amber flash
                 activeGame.timer += 10;
 
-                // Visual Effect: Time popup
+                const shockwave = document.createElement('div');
+                shockwave.className = 'skill-shockwave';
+                shockwave.style.borderColor = '#fbbf24';
+                arena.appendChild(shockwave);
+
                 const pop = document.createElement('span');
                 pop.className = 'time-add-pop';
                 pop.innerText = '+10s';
                 pop.style.left = '50%';
                 pop.style.top = '20%';
+                pop.style.fontSize = '3rem';
+                pop.style.color = '#fbbf24';
+                pop.style.textShadow = '0 0 20px #b45309';
                 arena.appendChild(pop);
-                setTimeout(() => pop.remove(), 1000);
+                setTimeout(() => {
+                    pop.remove();
+                    shockwave.remove();
+                }, 1000);
 
                 updateStats();
             } else if (avatarId === 'av_unicorn') {
+                flare.style.background = 'rgba(217, 70, 239, 0.4)'; // Prismatic flash
                 activeGame.skillActive = true;
+
+                const trail = document.createElement('div');
+                trail.className = 'rainbow-trail';
+                arena.appendChild(trail);
+
+                const shockwave = document.createElement('div');
+                shockwave.className = 'skill-shockwave';
+                shockwave.style.borderColor = '#d946ef';
+                arena.appendChild(shockwave);
+
                 const shield = document.getElementById(activeGame.mode + '-shield');
                 if (shield) {
                     shield.style.display = 'block';
-                    shield.style.border = '5px solid #60a5fa'; // Enhanced shield
+                    shield.style.border = '5px solid #d946ef';
+                    shield.style.boxShadow = '0 0 30px #d946ef, inset 0 0 20px #d946ef';
+                    shield.style.background = 'rgba(217, 70, 239, 0.2)';
                 }
                 setTimeout(() => {
                     activeGame.skillActive = false;
                     const shield = document.getElementById(activeGame.mode + '-shield');
-                    if (shield) shield.style.display = 'none';
+                    if (shield) {
+                        shield.style.display = 'none';
+                        shield.style.background = 'transparent';
+                    }
+                    trail.remove();
+                    shockwave.remove();
                 }, 5000);
             }
         }

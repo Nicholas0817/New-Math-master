@@ -1435,6 +1435,188 @@
             }
         }
 
+        /* Bombastic Avatar Elemental Auras */
+        .avatar-container {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .avatar-aura {
+            position: absolute;
+            width: 120%;
+            height: 120%;
+            border-radius: 50%;
+            z-index: -1;
+            filter: blur(8px);
+            opacity: 0.6;
+            transition: all 0.5s ease;
+        }
+
+        /* Lightning - Electric Blue */
+        .status-lightning .avatar-aura {
+            background: radial-gradient(circle, #60a5fa 0%, transparent 70%);
+            animation: pulse-lightning 2s infinite alternate;
+            box-shadow: 0 0 20px #2563eb, 0 0 40px #60a5fa;
+        }
+
+        /* Fire - Burning Orange/Red */
+        .status-fire .avatar-aura {
+            background: radial-gradient(circle, #f97316 0%, transparent 70%);
+            animation: pulse-fire 1.5s infinite alternate;
+            box-shadow: 0 0 20px #ea580c, 0 0 40px #f97316;
+        }
+
+        /* Steel - Metallic Silver/Blue */
+        .status-steel .avatar-aura {
+            background: radial-gradient(circle, #94a3b8 0%, transparent 70%);
+            animation: pulse-steel 3s infinite alternate;
+            box-shadow: 0 0 15px #64748b, 0 0 30px #94a3b8;
+        }
+
+        /* Arcane - Magic Pink/Purple */
+        .status-arcane .avatar-aura {
+            background: radial-gradient(circle, #d946ef 0%, transparent 70%);
+            animation: pulse-arcane 2.5s infinite alternate;
+            box-shadow: 0 0 20px #a21caf, 0 0 40px #d946ef;
+        }
+
+        /* Time - Golden Amber */
+        .status-time .avatar-aura {
+            background: radial-gradient(circle, #fbbf24 0%, transparent 70%);
+            animation: pulse-time 4s infinite alternate;
+            box-shadow: 0 0 20px #b45309, 0 0 40px #fbbf24;
+        }
+
+        /* Gem - Crystalline Cyan/Gold */
+        .status-gem .avatar-aura {
+            background: radial-gradient(circle, #22d3ee 0%, transparent 70%);
+            animation: pulse-gem 3s infinite alternate;
+            box-shadow: 0 0 20px #0891b2, 0 0 40px #22d3ee;
+        }
+
+        @keyframes pulse-lightning {
+            0% {
+                transform: scale(1);
+                opacity: 0.4;
+                filter: blur(8px);
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+                filter: blur(12px);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 0.4;
+                filter: blur(8px);
+            }
+        }
+
+        @keyframes pulse-fire {
+            0% {
+                transform: scale(1) translateY(0);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: scale(1.15) translateY(-5px);
+                opacity: 0.9;
+            }
+
+            100% {
+                transform: scale(1) translateY(0);
+                opacity: 0.5;
+            }
+        }
+
+        @keyframes pulse-steel {
+            0% {
+                transform: scale(1) rotate(0deg);
+                opacity: 0.4;
+            }
+
+            100% {
+                transform: scale(1.05) rotate(10deg);
+                opacity: 0.6;
+            }
+        }
+
+        @keyframes pulse-arcane {
+            0% {
+                transform: scale(1) rotate(0deg);
+                filter: hue-rotate(0deg);
+            }
+
+            100% {
+                transform: scale(1.2) rotate(45deg);
+                filter: hue-rotate(90deg);
+            }
+        }
+
+        @keyframes pulse-time {
+            0% {
+                transform: scale(1);
+                filter: brightness(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+                filter: brightness(1.5);
+            }
+
+            100% {
+                transform: scale(1);
+                filter: brightness(1);
+            }
+        }
+
+        @keyframes pulse-gem {
+            0% {
+                transform: scale(1);
+                filter: contrast(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+                filter: contrast(1.5) saturate(1.5);
+            }
+
+            100% {
+                transform: scale(1);
+                filter: contrast(1);
+            }
+        }
+
+        /* Navbar Avatar Styling */
+        .nav-avatar {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+            position: relative;
+        }
+
+        .nav-avatar:hover {
+            transform: scale(1.2);
+        }
+
+        .nav-avatar .avatar-aura {
+            width: 140%;
+            height: 140%;
+            filter: blur(4px);
+            opacity: 0.5;
+        }
+
         /* Instruction Styles */
         .help-btn {
             background: rgba(255, 255, 255, 0.2);
@@ -1532,6 +1714,9 @@
             <li><a href="#" onclick="showSection('infinite')">Infinite ♾️</a></li>
         </ul>
         <div class="nav-icons">
+            <div id="nav-profile-avatar" class="nav-avatar" onclick="showSection('home')">
+                <!-- Will be populated by JS -->
+            </div>
             <div class="coin-display">🪙 <span id="nav-coins">0</span></div>
             <a onclick="openModal('achievements-modal')" style="cursor:pointer; font-size:1.2rem;">🏆</a>
             <a onclick="openModal('shop-modal')" style="cursor:pointer; font-size:1.2rem;">🛒</a>
@@ -2613,7 +2798,7 @@
 
             // Generate Default (Unequip) item
             const isDefaultEquipped = userData.equipped[shopCategory] === 'default';
-            const defaultIcon = shopCategory === 'skin' ? '⚪' : shopCategory === 'bg' ? '🖼️' : '👨‍🎓';
+            const defaultIcon = shopCategory === 'skin' ? '⚪' : shopCategory === 'bg' ? '🖼️' : '👋';
             const defaultName = shopCategory === 'skin' ? 'Original Meteor' : shopCategory === 'bg' ? 'Classic Arena' : 'No Avatar';
 
             let html = `
@@ -2638,6 +2823,14 @@
                     previewHtml = `<div class="${i.extraClass || ''}" style="width:80px; height:80px; background:${i.previewCss}; border-radius:50%; margin: 10px auto; border:3px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1);"></div>`;
                 } else if (i.previewImg) {
                     previewHtml = `<img src="${i.previewImg}" style="width:100%; height:100px; object-fit:cover; border-radius:8px; margin-bottom:10px; border:1px solid #ddd;">`;
+                } else if (i.category === 'avatar') {
+                    const statusClass = getAvatarStatusClass(i.id);
+                    previewHtml = `
+                        <div class="${statusClass}" style="width:80px; height:80px; margin: 10px auto; display:flex; align-items:center; justify-content:center; font-size:3rem; position:relative;">
+                            <div class="avatar-aura" style="width:100px; height:100px;"></div>
+                            ${i.icon}
+                        </div>
+                    `;
                 }
 
                 return `
@@ -2698,12 +2891,55 @@
             const welcomeIcon = document.getElementById('welcome-avatar-icon');
             if (!welcomeIcon) return;
 
+            // Clear previous status classes from card-top
+            const cardTop = welcomeIcon.closest('.card-top');
+            if (cardTop) cardTop.className = 'card-top';
+
             if (avatarId === 'default') {
-                welcomeIcon.innerText = '👋';
+                welcomeIcon.innerHTML = '👋';
             } else {
                 const avatar = SHOP_ITEMS.find(i => i.id === avatarId);
-                if (avatar) welcomeIcon.innerText = avatar.icon;
+                const statusClass = getAvatarStatusClass(avatarId);
+                if (cardTop) cardTop.classList.add(statusClass);
+                welcomeIcon.innerHTML = `
+                    <div class="avatar-container">
+                        <div class="avatar-aura"></div>
+                        ${avatar.icon}
+                    </div>
+                `;
             }
+            updateNavbarAvatar();
+        }
+
+        function updateNavbarAvatar() {
+            const avatarId = userData.equipped.avatar;
+            const navAvatar = document.getElementById('nav-profile-avatar');
+            if (!navAvatar) return;
+
+            if (avatarId === 'default') {
+                navAvatar.className = 'nav-avatar';
+                navAvatar.innerHTML = '👋';
+            } else {
+                const avatar = SHOP_ITEMS.find(i => i.id === avatarId);
+                const statusClass = getAvatarStatusClass(avatarId);
+                navAvatar.className = 'nav-avatar ' + statusClass;
+                navAvatar.innerHTML = `
+                    <div class="avatar-aura"></div>
+                    ${avatar.icon}
+                `;
+            }
+        }
+
+        function getAvatarStatusClass(id) {
+            const map = {
+                'av_fox': 'status-lightning',
+                'av_robot': 'status-steel',
+                'av_dragon': 'status-fire',
+                'av_unicorn': 'status-arcane',
+                'av_robin': 'status-time',
+                'av_diamond': 'status-gem'
+            };
+            return map[id] || '';
         }
 
         // Skills Logic
